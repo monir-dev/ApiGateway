@@ -10,10 +10,15 @@
         }
       ],
       "UpstreamPathTemplate": "/gate-way/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post" ]
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "RouteIsCaseSensitive": false,
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "TestKey",
+        "AllowedScopes": []
+      }
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:44361"
+    "BaseUrl": "http://localhost:14091"
   }
 }

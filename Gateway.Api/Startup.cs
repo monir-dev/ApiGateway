@@ -1,17 +1,21 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Gateway.Api
@@ -34,6 +38,36 @@ namespace Gateway.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Gateway.Api", Version = "v1" });
             });
+
+            //var secret = "TestKey";
+            //var key = Encoding.ASCII.GetBytes(secret);
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //})
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.RequireHttpsMetadata = false;
+            //        options.SaveToken = true;
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            IssuerSigningKey = new SymmetricSecurityKey(key),
+            //            ValidateIssuerSigningKey = true,
+            //            ValidateIssuer = false,
+            //            ValidateAudience = false
+            //        };
+            //    });
+
+            var authenticationProviderKey = "TestKey";
+
+            services.AddAuthentication()
+                .AddJwtBearer(authenticationProviderKey, x =>
+                {
+                    x.Authority = "test";
+                    x.Audience = "test";
+                });
+
             services.AddOcelot(Configuration);
         }
 
@@ -50,6 +84,8 @@ namespace Gateway.Api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
