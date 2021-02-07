@@ -59,14 +59,36 @@ namespace Gateway.Api
             //        };
             //    });
 
-            var authenticationProviderKey = "TestKey";
+            //auth logic
+            string textKey = "this is the secret key to add some default jwt token, lets see how it works";
 
-            services.AddAuthentication()
-                .AddJwtBearer(authenticationProviderKey, x =>
-                {
-                    x.Authority = "test";
-                    x.Audience = "test";
-                });
+            var key = Encoding.ASCII.GetBytes(textKey);
+
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(textKey));
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+                ValidateIssuer = true,
+                ValidIssuer = "chandra",
+                ValidateAudience = true,
+                ValidAudience = "enduser",
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero,
+                RequireExpirationTime = true,
+            };
+
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+              .AddJwtBearer("TestKey", x =>
+              {
+                  x.RequireHttpsMetadata = false;
+                  x.TokenValidationParameters = tokenValidationParameters;
+              });
 
             services.AddOcelot(Configuration);
         }
